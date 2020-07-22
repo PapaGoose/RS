@@ -1,5 +1,5 @@
 ```python
-feg 
+from lightfm import LightFM
 ```
 ```
 grekhpowekh
