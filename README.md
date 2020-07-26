@@ -1,4 +1,5 @@
-'''python
+Сперва импортируем необходимые библеотеки:
+```python
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -14,10 +15,10 @@ from lightfm.data import Dataset
 
 import sklearn
 from sklearn.model_selection import train_test_split
-'''
+```
 Далее загружаем необходимые нам датасеты:
-'''ptyhon
+```ptyhon
 data = pd.read_csv('data/train.csv', low_memory=False)
 test = pd.read_csv('data/test.csv', low_memory=False)
 submission = pd.read_csv('data/sample_submission.csv')
-'''
+```
