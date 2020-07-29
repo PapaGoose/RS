@@ -77,11 +77,29 @@ def random_search(train, test, num_samples=10, num_threads=1):
 if __name__ == "__main__":
     data = pd.read_csv('data/train.csv', low_memory=False)
     test = pd.read_csv('data/test.csv', low_memory=False)
+    
     train_data, test_data = train_test_split(data,random_state=32, shuffle=True)
+    #создаем разреженную матрицу user/item
     ratings_coo = sparse.coo_matrix((train_data['rating'].astype(int),
                                  (train_data['userid'],
                                   train_data['itemid'])))
+                                  
     (score, hyperparams, model) = max(random_search(ratings_coo, test_data, num_threads=4, num_samples=200), key=lambda x: x[0])
-    winsound.Beep(freq, duration)
+    
     print("Best score {} at {}".format(score, hyperparams))
 ```
+Best score 0.7540887486124561 at {'no_components': 106, 'learning_schedule': 'adagrad', 'learning_rate': 0.15345874636828602, 'item_alpha': 1.8816625826291405e-08, 'user_alpha': 1.1161645409516314e-08, 'num_epochs': 13}
+
+После этого обучаем модель на этих параметрах и делаем предсказание:
+```python
+model = LightFM(**params_new,random_state=111)
+model.fit(ratings_coo, epochs=13, num_threads=4)
+
+preds = model.predict(test.userid.values,
+                      test.itemid.values)
+normalized_preds = (preds - preds.min())/(preds - preds.min()).max()
+submission = pd.read_csv('data/sample_submission.csv')
+submission['rating'] = normalized_preds
+submission.to_csv('data/new_sub.csv',index=False)
+```
+ROC AUC = 0.77466
